@@ -2,8 +2,9 @@ import requests
 import bs4
 import os
 '''retrival of paper id and title '''
-def search_by_keyword(keyword1):
-    data={"keyword":keyword1,"submit":"Search"}
+
+def search_by_keyword(keyword1,search='Search',count=0,d={}):
+    data={"keyword":keyword1,"submit":search}
 
     response=requests.post(url="https://www.ijsr.net/search_index_results.php",data=data)
 
@@ -11,7 +12,7 @@ def search_by_keyword(keyword1):
     soup=soup.find("div",{"id":"middle"})
     soup=soup.find_all("table")
     soup=soup[1:51]
-    d={}
+
 
     for table in soup:
         row=table.find("tr")
@@ -22,13 +23,16 @@ def search_by_keyword(keyword1):
         paper_id=col[2].find("input",attrs={"name":"paper_id"})['value']
         if(paper_id[0].isdigit()):
             continue
+        else:
+            count+=1
         d[paper_id]=[title,country,version]
+    if(count<200):
+        return search_by_keyword(keyword1,search="Search Again",count=count,d=d)
     return d
 
 '''retrival of downloaded papers'''
 def download(dict,keyword):
     for i in dict.keys():
-        print(i)
 
         version=dict[i][2]
         v=version.rfind("/")
@@ -44,7 +48,9 @@ def download(dict,keyword):
             pdf_file.write(response.content)
             pdf_file.close()
 
+
 keywords=['heart','artifical intelligence']
 for i in keywords:
     d=search_by_keyword(i)
+    print(len(d))
     download(d,i)
