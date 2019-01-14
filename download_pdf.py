@@ -1,27 +1,24 @@
 import requests
 import bs4
 import os
-'''retrival of paper id and title '''
+import sys
+'''retrival of paper id and title'''
 class download_pdf(object):
-
-
-    def __init__(self,keyword,count=50):
+    def __init__(self,keyword,count=100):
         self.keyword=keyword
         self.count=count
-
     def search_by_keyword(self,search='Search',d={},count1=0):
         keyword1=self.keyword
-
         data={"keyword":keyword1,"submit":search}
-
-        response=requests.post(url="https://www.ijsr.net/search_index_results.php",data=data)
-
+        try:
+            response=requests.post(url="https://www.ijsr.net/search_index_results.php",data=data)
+        except requests.exceptions.RequestException as e:
+            print(e)
+            sys.exit(1)
         soup=bs4.BeautifulSoup(response.text)
         soup=soup.find("div",{"id":"middle"})
         soup=soup.find_all("table")
         soup=soup[1:51]
-
-
         for table in soup:
             row=table.find("tr")
             col=row.find_all("td")
@@ -44,11 +41,15 @@ class download_pdf(object):
         keyword=self.keyword
         print("hfcgf",len(dict.keys()))
         for i in dict.keys():
-
+            print("trtui")
             version=dict[i][2]
             v=version.rfind("/")
             v=version[:v+1]+i+".pdf"
-            response=requests.get(url=v)
+            try:
+                response=requests.get(url=v)
+            except requests.exceptions.Timeout:
+                print("timeout")
+                break
             pdf_name = dict[i][0]+".pdf"
             pdf_path = os.path.join("pdfs",keyword,pdf_name)
             if not os.path.exists(pdf_path):
@@ -58,12 +59,8 @@ class download_pdf(object):
                 pdf_file = open(pdf_path, "wb")
                 pdf_file.write(response.content)
                 pdf_file.close()
-
-
-keywords=['heart','artifical intelligence']
+keywords=["artificial intelligence"]
 for i in keywords:
     d=download_pdf(i)
     d1=d.search_by_keyword()
-
-
     d.download(d1)
