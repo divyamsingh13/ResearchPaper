@@ -1,18 +1,31 @@
-import pandas
+import pandas as pd
 import numpy
 import six.moves.cPickle as pickle
 import textract
-
-text=textract.process("./pdfs/neural/A Hopfield Neural Network Based Building Agent for Detection and Correction of Programming Errors.pdf")
-text=str(text)
-keyword=text[text.find("Keywords:")+len("Keywords:"):text.find("Introduction")].split(',')
-print(keyword)
-
-f = open('train.pkl', 'wb')
-pkl.dump((train_x, train_y), f, -1)
-f.close()
+import os
 
 
-f = open('train.pkl', 'rb')
-reviews = pickle.load(f)
-f.close()
+class create_dataframe(object):
+
+    def __init__(self,keyword,pdf_path,title):
+        self.keyword=keyword
+        self.pdf_path=pdf_path
+        self.title=title
+    def dataframe(self):
+        text=textract.process(self.pdf_path)
+        text = str(text)
+
+        if os.path.exists("dataframe.pkl"):
+            dt = pd.read_pickle("dataframe.pkl")
+        else:
+            dt=pd.DataFrame()
+
+        dt['keyword']=self.keyword
+        dt['keywords']=text[text.find("Keywords:")+len("Keywords:"):text.find("Introduction")].split(',')
+        dt['title']=self.title
+        dt.to_pickle("dataframe.pkl")
+        print("creating")
+
+
+
+

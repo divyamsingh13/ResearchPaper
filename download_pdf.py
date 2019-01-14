@@ -2,6 +2,7 @@ import requests
 import bs4
 import os
 import sys
+from create_dataframe import create_dataframe
 '''retrival of paper id and title'''
 class download_pdf(object):
     def __init__(self,keyword,count=100):
@@ -59,6 +60,8 @@ class download_pdf(object):
                 pdf_file = open(pdf_path, "wb")
                 pdf_file.write(response.content)
                 pdf_file.close()
+                d=create_dataframe(keyword=keyword,pdf_path=pdf_path,title=dict[i][0])
+                d.dataframe()
 keywords=["artificial intelligence"]
 for i in keywords:
     d=download_pdf(i)
