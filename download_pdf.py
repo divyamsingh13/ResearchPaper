@@ -42,27 +42,33 @@ class download_pdf(object):
         keyword=self.keyword
         print("hfcgf",len(dict.keys()))
         for i in dict.keys():
-            print("trtui")
+
             version=dict[i][2]
             v=version.rfind("/")
             v=version[:v+1]+i+".pdf"
             try:
                 response=requests.get(url=v)
+                response.raise_for_status()
             except requests.exceptions.Timeout:
                 print("timeout")
                 break
+            except requests.exceptions.HTTPError as err:
+                print("url not found continuing",v)
+                continue
             pdf_name = dict[i][0]+".pdf"
             pdf_path = os.path.join("pdfs",keyword,pdf_name)
             if not os.path.exists(pdf_path):
-
                 if not os.path.exists(os.path.dirname(pdf_path)):
                     os.makedirs(os.path.dirname(pdf_path))
                 pdf_file = open(pdf_path, "wb")
                 pdf_file.write(response.content)
                 pdf_file.close()
+                print("pdf created")
+                print(v)
+                print(response.content)
                 d=create_dataframe(keyword=keyword,pdf_path=pdf_path,title=dict[i][0])
                 d.dataframe()
-keywords=["artificial intelligence"]
+keywords=["heart"]
 for i in keywords:
     d=download_pdf(i)
     d1=d.search_by_keyword()
