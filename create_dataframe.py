@@ -7,10 +7,11 @@ import os
 
 class create_dataframe(object):
 
-    def __init__(self,keyword,pdf_path,title):
+    def __init__(self,keyword,pdf_path,title,url):
         self.keyword=keyword
         self.pdf_path=pdf_path
         self.title=title
+        self.url=url
     def dataframe(self):
         text=textract.process(self.pdf_path)
         text = str(text)
@@ -19,25 +20,28 @@ class create_dataframe(object):
             dt = pd.read_pickle("dataframe.pkl")
         else:
             dt=pd.DataFrame()
+        dt1=pd.DataFrame()
         print("writing to dataframe")
-        dt['keyword']=self.keyword
+        dt1['keyword']=self.keyword
         print(text.find("Keywords:"))
         if(text.find("Keywords:")==-1):
             print("no keywords")
-            dt['keywords']=0
+            dt1['keywords']=0
+            print(self.url)
             return 0
         else:
-            dt['keywords'] = text[text.find("Keywords:") + len("Keywords:"):text.find("Introduction")].split(',')
+            dt1['keywords'] = text[text.find("Keywords:") + len("Keywords:"):text.find("Introduction")]
 
         print(self.title)
-        dt['title']=self.title
+        dt1['title']=self.title
 
         if(text.find("Conclusion")==-1 or text.find("References")==-1):
             print("no conclusion")
-            dt['conclusion']=0
+            dt1['conclusion']=0
             return 0
         else:
-            dt['conclusion']=text[text.find("Conclusion")+len("Conclusion"):text.find("References")]
+            dt1['conclusion']=text[text.find("Conclusion")+len("Conclusion"):text.find("References")]
+        dt.append(dt1)
         dt.to_pickle("dataframe.pkl")
 
 

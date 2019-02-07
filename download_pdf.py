@@ -2,6 +2,7 @@ import requests
 import bs4
 import os
 import sys
+import pandas as pd
 from create_dataframe import create_dataframe
 '''retrival of paper id and title'''
 class download_pdf(object):
@@ -66,10 +67,30 @@ class download_pdf(object):
                 print("pdf created")
                 print(v)
                 print(response.content)
-                d=create_dataframe(keyword=keyword,pdf_path=pdf_path,title=dict[i][0])
+                d=create_dataframe(keyword=keyword,pdf_path=pdf_path,title=dict[i][0],url=v)
                 d.dataframe()
+
+    def display_dataframe(self):
+        if os.path.exists("dataframe.pkl"):
+            dt = pd.read_pickle("dataframe.pkl")
+            print(dt)
+        else:
+            print("dataframe does not exist")
+    def search_by_all(self,arr):
+        if os.path.exists("dataframe.pkl"):
+            dt = pd.read_pickle("dataframe.pkl")
+
+        else:
+            print("dataframe does not exist")
+            return 0
+        for index,row in dt.iterrows():
+            if(set(arr)<=set(row['keywords'].split(','))):
+                print(row['title'])
+
 keywords=["heart"]
 for i in keywords:
     d=download_pdf(i)
     d1=d.search_by_keyword()
     d.download(d1)
+    d.display_dataframe()
+
