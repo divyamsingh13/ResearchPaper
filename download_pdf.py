@@ -110,6 +110,17 @@ class download_pdf(object):
         for index,row in dt.iterrows():
             if(set(arr)<=set(row['keywords'].split(','))):
                 print(row['title'])
+    def search_by_any(self,arr):
+        if os.path.exists("dataframe.pkl"):
+            dt = pd.read_pickle("dataframe.pkl")
+
+        else:
+            print("dataframe does not exist")
+            return 0
+        for index,row in dt.iterrows():
+            if(any(x in row['keywords'].split(',') for x in arr)):
+                print(row['title'])
+
 
 keywords=["heart"]
 if os.path.exists("dataframe.pkl"):
