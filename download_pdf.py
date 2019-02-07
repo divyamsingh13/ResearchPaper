@@ -3,6 +3,8 @@ import bs4
 import os
 import sys
 import pandas as pd
+import textract
+
 from create_dataframe import create_dataframe
 '''retrival of paper id and title'''
 class download_pdf(object):
@@ -42,6 +44,7 @@ class download_pdf(object):
     def download(self,dict):
         keyword=self.keyword
         print("hfcgf",len(dict.keys()))
+        df=pd.DataFrame()
         for i in dict.keys():
 
             version=dict[i][2]
@@ -67,8 +70,29 @@ class download_pdf(object):
                 print("pdf created")
                 print(v)
                 print(response.content)
-                d=create_dataframe(keyword=keyword,pdf_path=pdf_path,title=dict[i][0],url=v)
-                d.dataframe()
+
+                # process of creating dataframe starts
+
+                text = textract.process(pdf_path)
+                text = str(text)
+                if (text.find("Keywords:") == -1):
+                    print("no keywords")
+                    keywords = '0'
+                else:
+                    keywords = text[text.find("Keywords:") + len("Keywords:"):text.find("Introduction")]
+                if (text.find("Conclusion") == -1 or text.find("References") == -1):
+                    print("no conclusion")
+                    conclusion = '0'
+                else:
+                    conclusion = text[text.find("Conclusion") + len("Conclusion"):text.find("References")]
+                df=df.append({"keyword":self.keyword,"keywords":keywords,"url":v,"title":dict[i][0],"conclusion":conclusion},ignore_index=True)
+        print(df.shape)
+        return df
+
+
+
+                # d=create_dataframe(keyword=keyword,pdf_path=pdf_path,title=dict[i][0],url=v)
+                # d.dataframe()
 
     def display_dataframe(self):
         if os.path.exists("dataframe.pkl"):
@@ -88,9 +112,15 @@ class download_pdf(object):
                 print(row['title'])
 
 keywords=["heart"]
+if os.path.exists("dataframe.pkl"):
+    dt = pd.read_pickle("dataframe.pkl")
+else:
+    dt=pd.DataFrame()
+
 for i in keywords:
     d=download_pdf(i)
     d1=d.search_by_keyword()
-    d.download(d1)
-    d.display_dataframe()
-
+    df=d.download(d1)
+    dt=dt.append(df)
+print(dt.shape)
+dt.to_pickle("dataframe.pkl")
