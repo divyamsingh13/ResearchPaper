@@ -106,7 +106,14 @@ class download_pdf(object):
 
         else:
             print("dataframe does not exist")
-            return 0
+            print("downloading")
+            dt = pd.DataFrame()
+            for i in arr:
+                d = download_pdf(i)
+                d1 = d.search_by_keyword()
+                df = d.download(d1)
+                dt = dt.append(df)
+            dt.to_pickle("dataframe.pkl")
         for index,row in dt.iterrows():
             if(set(arr)<=set(row['keywords'].split(','))):
                 print(row['title'])
@@ -116,7 +123,15 @@ class download_pdf(object):
 
         else:
             print("dataframe does not exist")
-            return 0
+            print("downloading")
+            dt=pd.DataFrame()
+            for i in arr:
+                d = download_pdf(i)
+                d1 = d.search_by_keyword()
+                df = d.download(d1)
+                dt = dt.append(df)
+            dt.to_pickle("dataframe.pkl")
+
         for index,row in dt.iterrows():
             if(any(x in row['keywords'].split(',') for x in arr)):
                 print(row['title'])
