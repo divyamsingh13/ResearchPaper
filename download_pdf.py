@@ -59,6 +59,9 @@ class download_pdf(object):
             except requests.exceptions.HTTPError as err:
                 print("url not found continuing",v)
                 continue
+            except Exception as e:
+                print(e)
+                continue
             pdf_name = dict[i][0]+".pdf"
             pdf_path = os.path.join("pdfs",keyword,pdf_name)
             if not os.path.exists(pdf_path):
@@ -72,7 +75,7 @@ class download_pdf(object):
                 print(response.content)
 
                 # process of creating dataframe starts
-
+                pdf_path=os.path.normpath(pdf_path)
                 text = textract.process(pdf_path)
                 text = str(text)
                 if (text.find("Keywords:") == -1):
