@@ -44,7 +44,7 @@ class download_pdf(object):
     def download(self,dict):
         keyword=self.keyword
         print("hfcgf",len(dict.keys()))
-        df=pd.DataFrame()
+        df=pd.DataFrame(columns=['url','keywords','keyword','title','conclusion'])
         for i in dict.keys():
 
             version=dict[i][2]
@@ -110,7 +110,7 @@ class download_pdf(object):
         else:
             print("dataframe does not exist")
             print("downloading")
-            dt = pd.DataFrame()
+            dt = pd.DataFrame(columns=['url','keywords','keyword','title','conclusion'])
             for i in arr:
                 d = download_pdf(i)
                 d1 = d.search_by_keyword()
@@ -127,7 +127,7 @@ class download_pdf(object):
         else:
             print("dataframe does not exist")
             print("downloading")
-            dt=pd.DataFrame()
+            dt=pd.DataFrame(columns=['url','keywords','keyword','title','conclusion'])
             for i in arr:
                 d = download_pdf(i)
                 d1 = d.search_by_keyword()
@@ -144,7 +144,7 @@ if __name__=="__main__":
     if os.path.exists("dataframe.pkl"):
         dt = pd.read_pickle("dataframe.pkl")
     else:
-        dt=pd.DataFrame()
+        dt=pd.DataFrame(columns=['url','keywords','keyword','title','conclusion'])
 
     for i in keywords:
         d=download_pdf(i)
