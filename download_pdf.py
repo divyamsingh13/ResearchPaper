@@ -8,7 +8,7 @@ import textract
 from create_dataframe import create_dataframe
 '''retrival of paper id and title'''
 class download_pdf(object):
-    def __init__(self,keyword,count=100):
+    def __init__(self,keyword="",count=100):
         self.keyword=keyword
         self.count=count
     def search_by_keyword(self,search='Search',d={},count1=0):
@@ -136,17 +136,17 @@ class download_pdf(object):
             if(any(x in row['keywords'].split(',') for x in arr)):
                 print(row['title'])
 
+if __name__=="__main__":
+    keywords=["heart"]
+    if os.path.exists("dataframe.pkl"):
+        dt = pd.read_pickle("dataframe.pkl")
+    else:
+        dt=pd.DataFrame()
 
-keywords=["heart"]
-if os.path.exists("dataframe.pkl"):
-    dt = pd.read_pickle("dataframe.pkl")
-else:
-    dt=pd.DataFrame()
-
-for i in keywords:
-    d=download_pdf(i)
-    d1=d.search_by_keyword()
-    df=d.download(d1)
-    dt=dt.append(df)
-print(dt.shape)
-dt.to_pickle("dataframe.pkl")
+    for i in keywords:
+        d=download_pdf(i)
+        d1=d.search_by_keyword()
+        df=d.download(d1)
+        dt=dt.append(df)
+    print(dt.shape)
+    dt.to_pickle("dataframe.pkl")
