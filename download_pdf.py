@@ -8,7 +8,7 @@ import textract
 from create_dataframe import create_dataframe
 '''retrival of paper id and title'''
 class download_pdf(object):
-    def __init__(self,keyword="",count=100):
+    def __init__(self,keyword="",count=250):
         self.keyword=keyword
         self.count=count
     def search_by_keyword(self,search='Search',d={},count1=0):
@@ -26,15 +26,16 @@ class download_pdf(object):
         for table in soup:
             row=table.find("tr")
             col=row.find_all("td")
-            title=col[0].a.font.text
-            version=col[0].a['href']
-            country=col[1].em.font.text
-            paper_id=col[2].find("input",attrs={"name":"paper_id"})['value']
-            if(paper_id[0].isdigit()):
-                continue
-            else:
-                count1+=1
-            d[paper_id]=[title,country,version]
+            if(col is not None):
+                title=col[0].a.font.text
+                version=col[0].a['href']
+                country=col[1].em.font.text
+                paper_id=col[2].find("input",attrs={"name":"paper_id"})['value']
+                if(paper_id[0].isdigit()):
+                    continue
+                else:
+                    count1+=1
+                d[paper_id]=[title,country,version]
         if(count1<self.count):
             return self.search_by_keyword(search="Search Again",count1=count1,d=d)
         else:
@@ -140,16 +141,22 @@ class download_pdf(object):
                 print(row['title'])
 
 if __name__=="__main__":
-    keywords=["heart"]
+    keywords=["kidney"]
     if os.path.exists("dataframe.pkl"):
         dt = pd.read_pickle("dataframe.pkl")
     else:
         dt=pd.DataFrame(columns=['url','keywords','keyword','title','conclusion'])
 
     for i in keywords:
-        d=download_pdf(i)
-        d1=d.search_by_keyword()
-        df=d.download(d1)
-        dt=dt.append(df)
+        d=download_pdf(i,19)
+        try:
+            d1=d.search_by_keyword()
+            df = d.download(d1)
+            dt = dt.append(df)
+        except AttributeError as e:
+            print(e)
+            break
+
     print(dt.shape)
     dt.to_pickle("dataframe.pkl")
+    dt.to_csv("dataframe.csv")
