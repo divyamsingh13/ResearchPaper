@@ -156,7 +156,7 @@ if __name__=="__main__":
         except AttributeError as e:
             print(e)
             break
-        
+
     print(dt.shape)
     dt.to_pickle("dataframe.pkl")
     dt.to_csv("dataframe.csv")
