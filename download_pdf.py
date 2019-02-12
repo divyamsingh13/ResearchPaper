@@ -8,7 +8,7 @@ import textract
 from create_dataframe import create_dataframe
 '''retrival of paper id and title'''
 class download_pdf(object):
-    def __init__(self,keyword="",count=100):
+    def __init__(self,keyword="",count=250):
         self.keyword=keyword
         self.count=count
     def search_by_keyword(self,search='Search',d={},count1=0):
@@ -26,6 +26,8 @@ class download_pdf(object):
         for table in soup:
             row=table.find("tr")
             col=row.find_all("td")
+            if(col is None):
+                continue
             title=col[0].a.font.text
             version=col[0].a['href']
             country=col[1].em.font.text
@@ -140,7 +142,7 @@ class download_pdf(object):
                 print(row['title'])
 
 if __name__=="__main__":
-    keywords=["heart"]
+    keywords=["kidney","brain","eyes","blockchain","neural","cancer","neuron","edge","car","spam"]
     if os.path.exists("dataframe.pkl"):
         dt = pd.read_pickle("dataframe.pkl")
     else:
@@ -153,3 +155,4 @@ if __name__=="__main__":
         dt=dt.append(df)
     print(dt.shape)
     dt.to_pickle("dataframe.pkl")
+    dt.to_csv("dataframe.csv")
