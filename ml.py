@@ -7,7 +7,8 @@ class ml(object):
     def __init__(self,df):
         self.df=df
 
-    def summarize(self):
+    def summarize1(self):
+        #refer https://stackabuse.com/text-summarization-with-nltk-in-python/
         df=self.df
         df1=df[(df.conclusion !=  '') & (df.conclusion != 0)]
         df1['conclusion'].fillna("not available",inplace=True)
@@ -52,7 +53,7 @@ class ml(object):
             #to find summary
             summary_sentences = heapq.nlargest(7, sentence_scores, key=sentence_scores.get)
             summary = ' '.join(summary_sentences)
-            print(summary)
+            print("summary",summary)
 
 
 

@@ -19,7 +19,7 @@ class download_pdf(object):
         except requests.exceptions.RequestException as e:
             print(e)
             sys.exit(1)
-        soup=bs4.BeautifulSoup(response.text)
+        soup=bs4.BeautifulSoup(response.text,"lxml")
         soup=soup.find("div",{"id":"middle"})
         soup=soup.find_all("table")
         soup=soup[1:51]
@@ -73,7 +73,7 @@ class download_pdf(object):
                 pdf_file.close()
                 print("pdf created")
                 print(v)
-                print(response.content)
+
 
                 # process of creating dataframe starts
                 pdf_path=os.path.normpath(pdf_path)
@@ -83,7 +83,10 @@ class download_pdf(object):
                     print("no keywords")
                     keywords = '0'
                 else:
-                    keywords = text[text.find("Keywords:") + len("Keywords:"):text.find("Introduction")]
+                    keywords1 = text[text.find("Keywords:") + len("Keywords:"):text.find('Introduction:')]
+                    print(keywords1)
+                    keywords=keywords1.split("\\n")[0]
+                    print(keywords)
                 if (text.find("Conclusion") == -1 or text.find("References") == -1):
                     print("no conclusion")
                     conclusion = '0'
