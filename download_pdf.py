@@ -84,14 +84,17 @@ class download_pdf(object):
                     keywords = '0'
                 else:
                     keywords1 = text[text.find("Keywords:") + len("Keywords:"):text.find('Introduction:')]
-                    print(keywords1)
+
                     keywords=keywords1.split("\\n")[0]
-                    print(keywords)
+
                 if (text.find("Conclusion") == -1 or text.find("References") == -1):
                     print("no conclusion")
                     conclusion = '0'
                 else:
                     conclusion = text[text.find("Conclusion") + len("Conclusion"):text.find("References")]
+                    print(conclusion)
+                    conclusion=conclusion.split("\\n\\n")[0]
+                    print(conclusion)
                 df=df.append({"keyword":self.keyword,"keywords":keywords,"url":v,"title":dict[i][0],"conclusion":conclusion},ignore_index=True)
         print(df.shape)
         return df
