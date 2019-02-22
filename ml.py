@@ -17,7 +17,7 @@ from sumy.utils import get_stop_words
 
 from sumy.summarizers.luhn import LuhnSummarizer
 from sumy.summarizers.edmundson import EdmundsonSummarizer
-
+stopwords = nltk.corpus.stopwords.words('english')
 class ml(object):
     def __init__(self,df):
         self.df=df
@@ -96,7 +96,7 @@ class ml(object):
 
             # make alphabets lowercase
             clean_sentences = [s.lower() for s in clean_sentences]
-            stop_words = stopwords.words('english')
+            stop_words = stopwords
 
             def remove_stopwords(sen):
                 sen_new = " ".join([i for i in sen if i not in stop_words])
@@ -119,21 +119,24 @@ class ml(object):
             nx_graph = nx.from_numpy_array(sim_mat)
             scores = nx.pagerank(nx_graph)
             ranked_sentences = sorted(((scores[i], s) for i, s in enumerate(sentences)), reverse=True)
-            for i in range(10):
-                print(ranked_sentences[i][1])
+            print(len(ranked_sentences))
+            print(len(ranked_sentences[0]))
+            for i in ranked_sentences:
+                for j in i:
+                    print(j)
     def summarize3(self,df):
         #http://ai.intelligentonlinetools.com/ml/text-summarization/
-        for row in df['conclusion']:
+        for row,title in zip(df['conclusion'],df['title']):
             if row=='0' or row=='':
                 continue
-
+            row1=(title,row)
             print('Summary:')
-            print(summarize(str(row), ratio=0.01))
+            print(summarize(str(row1), ratio=0.01))
 
             print('\nKeywords:')
 
             # higher ratio => more keywords
-            print(keywords(str(row), ratio=0.01))
+            print(keywords(str(row1), ratio=0.01))
     def summarize4(self,df):
         #http://ai.intelligentonlinetools.com/ml/text-summarization/
         LANGUAGE = "english"
@@ -153,7 +156,7 @@ class ml(object):
             print("--LuhnSummarizer--")
             summarizer = LuhnSummarizer()
 
-            summarizer.stop_words = stopwords.words('english')
+            summarizer.stop_words = stopwords
             for sentence in summarizer(parser.document, SENTENCES_COUNT):
                 print(sentence)
 
@@ -173,4 +176,4 @@ class ml(object):
 if __name__=="__main__":
     df=pd.read_csv("dataframe.csv")
     m=ml(df)
-    m.summarize()
+    m.summarize4(df)

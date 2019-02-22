@@ -154,7 +154,7 @@ if __name__=="__main__":
         dt=pd.DataFrame(columns=['url','keywords','keyword','title','conclusion'])
 
     for i in keywords:
-        d=download_pdf(i,19)
+        d=download_pdf(i,100)
         try:
             d1=d.search_by_keyword()
             df = d.download(d1)
