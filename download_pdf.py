@@ -19,6 +19,10 @@ class download_pdf(object):
         except requests.exceptions.RequestException as e:
             print(e)
             sys.exit(1)
+        except Exception as e:
+            print("Exception encoutered at line 18",e)
+            print("high value of count")
+            return d
         soup=bs4.BeautifulSoup(response.text,"lxml")
         soup=soup.find("div",{"id":"middle"})
         soup=soup.find_all("table")
